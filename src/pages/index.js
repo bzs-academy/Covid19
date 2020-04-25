@@ -30,7 +30,7 @@ const IndexPage = () => {
     let response;
 
     try {
-      response = await axios.get('https://corona.lmao.ninja/countries');
+      response = await axios.get('https://corona.lmao.ninja/v2/countries');
     } catch(err) {
       console.log('Failed to fetch: ' + err.message, err);
     }
@@ -89,7 +89,10 @@ const IndexPage = () => {
         }
     
         const html = `
-          <span class="icon-marker">
+          <span 
+            class="icon-marker" 
+            style="width:${Number(cases/20000).toFixed(1)}em; height:${Number(cases/20000).toFixed(1)}em; max-width:7em; max-height:7em; min-width:3em; min-height:3em;"
+          >
             <span class="icon-marker-tooltip">
               <h2>${country}</h2>
               <ul>
@@ -119,7 +122,7 @@ const IndexPage = () => {
 
   const mapSettings = {
     center: CENTER,
-    defaultBaseMap: 'OpenStreetMap',
+    defaultBaseMap: 'Bulent',
     zoom: DEFAULT_ZOOM,
     mapEffect
   };

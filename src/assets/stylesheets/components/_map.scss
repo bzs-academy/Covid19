@@ -4,9 +4,22 @@
 
   &,
   .map-base {
+
     width: 100%;
     height: 100%;
-    background: $blue-grey-50;
+    background: $map-background;
+
+    .leaflet-control-attribution {
+
+      color: $blue-grey-400;
+      background-color: darken($map-background, 5);
+
+      a {
+        color: #009ddb;
+      }
+
+    }
+
   }
 
 }
@@ -46,16 +59,16 @@
   height: 3.6em;
   font-size: .7em;
   font-weight: bold;
-  background-color: $red-800;
+  background-color: rgba(203, 45, 45, 0.584);
   border-radius: 100%;
   box-shadow: 0 2px 5px rgba(black, .9);
 
-  &:hover {
-
-    .icon-marker-tooltip {
-      display: block;
+  @media(hover: hover) and (pointer: fine) {
+    &:hover {
+      .icon-marker-tooltip {
+        display: block;
+      }
     }
-
   }
 
 }
