@@ -1,6 +1,7 @@
-import React from 'react';
+import React, {useEffect,useState} from 'react';
 import Helmet from 'react-helmet';
 import L from 'leaflet';
+import {getEmojiFlag} from 'countries-list';
 
 
 import Layout from 'components/Layout';
@@ -19,6 +20,57 @@ const DEFAULT_ZOOM = 2;
 
 
 const IndexPage = () => {
+  let dataTable= [], response;
+
+  //const [dataState, updateDataState] = useState(null);
+  const [state,updateState] = useState({response:null,dataTable:null});
+
+  useEffect(()=>{
+
+    console.log('xxxy');
+    const tableCreator = async () => {
+      try {
+        response = await axios.get('https://corona.lmao.ninja/v2/countries');
+      } catch(err) {
+        console.log('Failed to fetch: ' + err.message, err);
+      }
+
+      await response.data.map(async item=>{
+        dataTable.push(
+        <tr>
+            <td>
+              {await getEmojiFlag(item.countryInfo.iso2) +' '+ item.country}
+            </td>
+            <td>
+              {item.cases}
+            </td>
+            <td>
+              {item.todayCases}
+            </td>
+            <td>
+              {item.deaths}
+            </td>
+            <td>
+              {item.todayDeaths}
+            </td>
+            <td>
+              {item.recovered}
+            </td>
+        </tr>
+        )
+      });
+  
+        updateState({response,dataTable});
+
+      console.log(state.dataTable)
+    }
+
+    tableCreator();
+    console.log('use effect run')
+  },[]);
+
+  
+  
 
   /**
    * mapEffect
@@ -27,15 +79,15 @@ const IndexPage = () => {
    */
 
   async function mapEffect({ leafletElement:map } = {}) {
-    let response;
-
-    try {
-      response = await axios.get('https://corona.lmao.ninja/v2/countries');
-    } catch(err) {
-      console.log('Failed to fetch: ' + err.message, err);
+    if (!state.response){
+      return;
     }
+    console.log('map effect run');
+    //let response;
 
-    const {data = []} = response;
+    
+  
+    const {data = []} = state.response;
 
     console.log(data);
     //console.log(response);
@@ -72,6 +124,7 @@ const IndexPage = () => {
     
         const {
           country,
+          countryInfo,
           updated,
           cases,
           deaths,
@@ -94,7 +147,7 @@ const IndexPage = () => {
             style="width:${Number(cases/20000).toFixed(1)}em; height:${Number(cases/20000).toFixed(1)}em; max-width:7em; max-height:7em; min-width:3em; min-height:3em;"
           >
             <span class="icon-marker-tooltip">
-              <h2>${country}</h2>
+              <h2>${getEmojiFlag(countryInfo.iso2) +' '+ country}</h2>
               <ul>
                 <li><strong>Confirmed:</strong> ${cases}</li>
                 <li><strong>Deaths:</strong> ${deaths}</li>
@@ -126,7 +179,7 @@ const IndexPage = () => {
     zoom: DEFAULT_ZOOM,
     mapEffect
   };
-
+console.log('xx');
   return (
     <Layout pageName="home">
       <Helmet>
@@ -137,12 +190,34 @@ const IndexPage = () => {
       </Map>
 
       <Container type="content" className="text-center home-start">
-        <h2>Still Getting Started?</h2>
-        <p>Run the following in your terminal!</p>
-        <pre>
-          <code>gatsby new [directory] https://github.com/colbyfayock/gatsby-starter-leaflet</code>
-        </pre>
-        <p className="note">Note: Gatsby CLI required globally for the above command</p>
+        //Table
+        <table>
+          <thead>
+            <tr>
+              <th>
+                Countheady
+              </th>
+              <th>
+                Cases
+              </th>
+              <th>
+                Today Cases
+              </th>
+              <th>
+                Deaths
+              </th>
+              <th>
+                Today Deaths
+              </th>
+              <th>
+                Recovered
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {state.dataTable}
+          </tbody>
+        </table>
       </Container>
     </Layout>
   );
