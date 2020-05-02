@@ -10,6 +10,8 @@ import Map from 'components/Map';
 
 import axios from 'axios';
 
+import Table from '../components/Table'
+
 
 const LOCATION = {
   lat: 38.9072,
@@ -27,7 +29,7 @@ const IndexPage = () => {
 
   useEffect(()=>{
 
-    console.log('xxxy');
+    //console.log('xxxy');
     const tableCreator = async () => {
       try {
         response = await axios.get('https://corona.lmao.ninja/v2/countries');
@@ -37,32 +39,20 @@ const IndexPage = () => {
 
       await response.data.map(async item=>{
         dataTable.push(
-        <tr>
-            <td>
-              {await getEmojiFlag(item.countryInfo.iso2) +' '+ item.country}
-            </td>
-            <td>
-              {item.cases}
-            </td>
-            <td>
-              {item.todayCases}
-            </td>
-            <td>
-              {item.deaths}
-            </td>
-            <td>
-              {item.todayDeaths}
-            </td>
-            <td>
-              {item.recovered}
-            </td>
-        </tr>
+          {
+            country: getEmojiFlag(item.countryInfo.iso2) +' '+ item.country,
+            confirmed: item.cases,
+            confirmed24: item.todayCases,
+            death: item.deaths,
+            death24: item.todayDeaths,
+            recovered: item.recovered
+          }
         )
       });
   
-        updateState({response,dataTable});
+      updateState({response,dataTable});
 
-      console.log(state.dataTable)
+      //console.log(state.dataTable)
     }
 
     tableCreator();
@@ -190,8 +180,8 @@ console.log('xx');
       </Map>
 
       <Container type="content" className="text-center home-start">
-        //Table
-        <table>
+        
+        {/* <table>
           <thead>
             <tr>
               <th>
@@ -217,7 +207,21 @@ console.log('xx');
           <tbody>
             {state.dataTable}
           </tbody>
-        </table>
+        </table> */}
+
+        
+        {state.dataTable?
+        <Table 
+          headCells={[
+            { id: 'country', numeric: false, disablePadding: true, label: 'Country' },
+            { id: 'confirmed', numeric: true, disablePadding: false, label: 'Confirmed' },
+            { id: 'confirmed24', numeric: true, disablePadding: false, label: '24 H' },
+            { id: 'death', numeric: true, disablePadding: false, label: 'Death' },
+            { id: 'death24', numeric: true, disablePadding: false, label: '24 H' },
+            { id: 'recovered', numeric: true, disablePadding: false, label: 'Recovered' }
+          ]}
+          rows={state.dataTable}
+        />:null}
       </Container>
     </Layout>
   );
