@@ -22,10 +22,24 @@ const DEFAULT_ZOOM = 2;
 
 
 const IndexPage = () => {
-  let dataTable= [], response;
+  let dataTable= [], response, news;
 
   //const [dataState, updateDataState] = useState(null);
   const [state,updateState] = useState({response:null,dataTable:null});
+  const [newsState] = useState(
+    [
+        {
+            urlToImage:"https://www.nj.com/resizer/ewOeGU5IVwJgJ0_NXptqTfUN1M8=/1280x0/smart/arc-anglerfish-arc2-prod-advancelocal.s3.amazonaws.com/public/OEFHMGVTFNCNVBXNJQADDHCSRM.jpg",
+            title: "Test 1",
+            description: "Test 1 Content"
+        },
+        {
+            urlToImage:"https://static.politico.com/45/f9/b6bbbc1e4c0fa6bd3059d4875548/cuomo-corona-brief.jpg",
+            title: "Test 2",
+            description: "Test 2 Content"
+        }
+    ]
+);
 
   useEffect(()=>{
 
@@ -51,6 +65,17 @@ const IndexPage = () => {
       });
   
       updateState({response,dataTable});
+
+      news = newsState.map((item, i)=>{
+        return(
+           /*  <NewsCard
+                click={()=>updateActiveNewIndex(i)}
+                width='18rem'
+                {...item}
+            /> */
+            'test'
+        );
+    });
 
       //console.log(state.dataTable)
     }
@@ -181,39 +206,10 @@ console.log('xx');
 
       <Container type="content" className="text-center home-start">
         
-        {/* <table>
-          <thead>
-            <tr>
-              <th>
-                Countheady
-              </th>
-              <th>
-                Cases
-              </th>
-              <th>
-                Today Cases
-              </th>
-              <th>
-                Deaths
-              </th>
-              <th>
-                Today Deaths
-              </th>
-              <th>
-                Recovered
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {state.dataTable}
-          </tbody>
-        </table> */}
-
-        
         {state.dataTable?
         <Table 
           headCells={[
-            { id: 'country', numeric: false, disablePadding: true, label: 'Country' },
+            { id: 'country', numeric: false, disablePadding: false, label: 'Country' },
             { id: 'confirmed', numeric: true, disablePadding: false, label: 'Confirmed' },
             { id: 'confirmed24', numeric: true, disablePadding: false, label: '24 H' },
             { id: 'death', numeric: true, disablePadding: false, label: 'Death' },
@@ -222,6 +218,13 @@ console.log('xx');
           ]}
           rows={state.dataTable}
         />:null}
+
+        <div className="test">
+          //To-do: News cards goes here
+          {news}
+        </div>
+
+
       </Container>
     </Layout>
   );

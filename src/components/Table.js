@@ -85,14 +85,14 @@ function EnhancedTableHead(props) {
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox">
-          <Checkbox
+        {/* <TableCell padding="checkbox">
+           <Checkbox
             indeterminate={numSelected > 0 && numSelected < rowCount}
             checked={rowCount > 0 && numSelected === rowCount}
             onChange={onSelectAllClick}
             inputProps={{ 'aria-label': 'select all desserts' }}
-          />
-        </TableCell>
+          /> 
+        </TableCell> */}
         {props.headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
@@ -123,13 +123,13 @@ EnhancedTableHead.propTypes = {
   classes: PropTypes.object.isRequired,
   numSelected: PropTypes.number.isRequired,
   onRequestSort: PropTypes.func.isRequired,
-  onSelectAllClick: PropTypes.func.isRequired,
+  /* onSelectAllClick: PropTypes.func.isRequired, */
   order: PropTypes.oneOf(['asc', 'desc']).isRequired,
   orderBy: PropTypes.string.isRequired,
   rowCount: PropTypes.number.isRequired,
 };
 
-const useToolbarStyles = makeStyles((theme) => ({
+/* const useToolbarStyles = makeStyles((theme) => ({
   root: {
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(1),
@@ -147,9 +147,9 @@ const useToolbarStyles = makeStyles((theme) => ({
   title: {
     flex: '1 1 100%',
   },
-}));
+})) */;
 
-const EnhancedTableToolbar = (props) => {
+/* const EnhancedTableToolbar = (props) => {
   const classes = useToolbarStyles();
   const { numSelected } = props;
 
@@ -184,11 +184,11 @@ const EnhancedTableToolbar = (props) => {
       )}
     </Toolbar>
   );
-};
+}; */
 
-EnhancedTableToolbar.propTypes = {
+/* EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
-};
+}; */
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -198,20 +198,9 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     marginBottom: theme.spacing(2),
   },
-  table: {
-    minWidth: 750,
-  },
-  visuallyHidden: {
-    border: 0,
-    clip: 'rect(0 0 0 0)',
-    height: 1,
-    margin: -1,
-    overflow: 'hidden',
-    padding: 0,
-    position: 'absolute',
-    top: 20,
-    width: 1,
-  },
+  container: {
+    maxHeight: 440,
+  }
 }));
 
 export default function EnhancedTable(props) {
@@ -221,7 +210,7 @@ export default function EnhancedTable(props) {
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  /* const [rowsPerPage, setRowsPerPage] = React.useState(5); */
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -258,7 +247,7 @@ export default function EnhancedTable(props) {
     setSelected(newSelected);
   };
 
-  const handleChangePage = (event, newPage) => {
+/*   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
 
@@ -269,38 +258,38 @@ export default function EnhancedTable(props) {
 
   const handleChangeDense = (event) => {
     setDense(event.target.checked);
-  };
+  }; */
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
-  const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+  /* const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage); */
 
   //console.log('abc', props.rows)
 
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <EnhancedTableToolbar numSelected={selected.length} />
-        <TableContainer>
+       {/*  <EnhancedTableToolbar numSelected={selected.length} /> */}
+        <TableContainer className={classes.container}>
           <Table
             className={classes.table}
             aria-labelledby="tableTitle"
             size={dense ? 'small' : 'medium'}
-            aria-label="enhanced table"
+            stickyHeader
           >
             <EnhancedTableHead
               classes={classes}
               numSelected={selected.length}
               order={order}
               orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
+              /* onSelectAllClick={handleSelectAllClick} */
               onRequestSort={handleRequestSort}
               rowCount={rows.length}
               headCells = {props.headCells}
             />
             <TableBody>
               {stableSort(props.rows, getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                /* .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) */
                 .map((row, index) => {
                   const isItemSelected = isSelected(row.name);
                   const labelId = `enhanced-table-checkbox-${index}`;
@@ -315,13 +304,13 @@ export default function EnhancedTable(props) {
                       key={row.name}
                       selected={isItemSelected}
                     >
-                      <TableCell padding="checkbox">
+                      {/* <TableCell padding="checkbox">
                         <Checkbox
                           checked={isItemSelected}
                           inputProps={{ 'aria-labelledby': labelId }}
                         />
-                      </TableCell>
-                      <TableCell component="th" id={labelId} scope="row" padding="none">
+                      </TableCell> */}
+                      <TableCell component="th" id={labelId} scope="row" padding="default">
                         {row.country}
                       </TableCell>
                       <TableCell align="right">{row.confirmed}</TableCell>
@@ -332,15 +321,15 @@ export default function EnhancedTable(props) {
                     </TableRow>
                   );
                 })}
-              {emptyRows > 0 && (
+              {/* {emptyRows > 0 && (
                 <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
                   <TableCell colSpan={6} />
                 </TableRow>
-              )}
+              )} */}
             </TableBody>
           </Table>
         </TableContainer>
-        <TablePagination
+        {/* <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
           count={rows.length}
@@ -348,12 +337,12 @@ export default function EnhancedTable(props) {
           page={page}
           onChangePage={handleChangePage}
           onChangeRowsPerPage={handleChangeRowsPerPage}
-        />
+        /> */}
       </Paper>
-      <FormControlLabel
+      {/* <FormControlLabel
         control={<Switch checked={dense} onChange={handleChangeDense} />}
         label="Dense padding"
-      />
+      /> */}
     </div>
   );
 }
