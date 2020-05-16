@@ -5,13 +5,15 @@ import {getEmojiFlag} from 'countries-list';
 
 
 import Layout from 'components/Layout';
-import Container from 'components/Container';
+//import Container from 'components/Container';
 import Map from 'components/Map';
 
 import axios from 'axios';
 
 import Table from '../components/Table'
+import NewsCard from '../components/NewsCard'
 
+import Grid from '@material-ui/core/Grid';
 
 const LOCATION = {
   lat: 38.9072,
@@ -25,21 +27,31 @@ const IndexPage = () => {
   let dataTable= [], response, news;
 
   //const [dataState, updateDataState] = useState(null);
-  const [state,updateState] = useState({response:null,dataTable:null});
-  const [newsState] = useState(
-    [
-        {
-            urlToImage:"https://www.nj.com/resizer/ewOeGU5IVwJgJ0_NXptqTfUN1M8=/1280x0/smart/arc-anglerfish-arc2-prod-advancelocal.s3.amazonaws.com/public/OEFHMGVTFNCNVBXNJQADDHCSRM.jpg",
-            title: "Test 1",
-            description: "Test 1 Content"
-        },
-        {
-            urlToImage:"https://static.politico.com/45/f9/b6bbbc1e4c0fa6bd3059d4875548/cuomo-corona-brief.jpg",
-            title: "Test 2",
-            description: "Test 2 Content"
-        }
-    ]
-);
+  const [state,updateState] = useState({
+    response:null,
+    dataTable:null,
+    news:[
+      {
+          urlToImage:"https://www.nj.com/resizer/ewOeGU5IVwJgJ0_NXptqTfUN1M8=/1280x0/smart/arc-anglerfish-arc2-prod-advancelocal.s3.amazonaws.com/public/OEFHMGVTFNCNVBXNJQADDHCSRM.jpg",
+          title: "Test 1",
+          description: "Test 1 Content",
+          source:{
+            name:"BZS"
+          }
+      },
+      {
+          urlToImage:"https://static.politico.com/45/f9/b6bbbc1e4c0fa6bd3059d4875548/cuomo-corona-brief.jpg",
+          title: "Test 2",
+          description: "Test 2 Content",
+          source:{
+            name:"BZS"
+          }
+      }
+  ]
+  });
+  /* const [newsState] = useState(
+    
+); */
 
   useEffect(()=>{
 
@@ -64,18 +76,25 @@ const IndexPage = () => {
         )
       });
   
-      updateState({response,dataTable});
+      
+      const urlBase = 'https://newsapi.org/v2/top-headlines?';
+      const country = 'country=de&'//this.props.country!==null?`country=${this.props.country}&`:'country=us&';
+      const urlApi = 'apiKey=78961d7c864d4c77a95f173e437d7af1';
+      const keyword = 'q=corona&'//this.props.category!==null?`category=${this.props.category}&`:'';
 
-      news = newsState.map((item, i)=>{
-        return(
-           /*  <NewsCard
-                click={()=>updateActiveNewIndex(i)}
-                width='18rem'
-                {...item}
-            /> */
-            'test'
-        );
-    });
+      const url = urlBase + country + keyword + urlApi;
+          
+      //console.log(url)
+          
+      await axios.get(url)
+      .then(result=>{
+          console.log(result);
+          news = result.data.articles;
+          
+      })
+      .catch(err=>console.log(err));
+
+    updateState({...state, response, dataTable, news});
 
       //console.log(state.dataTable)
     }
@@ -194,7 +213,8 @@ const IndexPage = () => {
     zoom: DEFAULT_ZOOM,
     mapEffect
   };
-console.log('xx');
+//console.log(news);
+
   return (
     <Layout pageName="home">
       <Helmet>
@@ -204,8 +224,11 @@ console.log('xx');
       <Map {...mapSettings}>
       </Map>
 
-      <Container type="content" className="text-center home-start">
-        
+      {/* <Container type="content" className="text-center home-start row"> */}
+  
+      <Grid item xs={12}>
+        <Grid container justify="center" spacing='2'>
+        <Grid key="1" item>
         {state.dataTable?
         <Table 
           headCells={[
@@ -218,14 +241,16 @@ console.log('xx');
           ]}
           rows={state.dataTable}
         />:null}
+        </Grid>
+        <Grid key="2" item>
+          <NewsCard
+            data={state.news}
+          />
+           </Grid>
+          </Grid>
+      </Grid>
 
-        <div className="test">
-          //To-do: News cards goes here
-          {news}
-        </div>
-
-
-      </Container>
+      {/* </Container> */}
     </Layout>
   );
 };
